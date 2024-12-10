@@ -27,7 +27,6 @@
     <button onclick="filterByPrice()">Фильтровать по цене</button>
   </div>
 
-  <h2></h2>
   <!-- Поле для фильтрации таблицы -->
   <input type="text" id="filter-input" placeholder="Введите текст для поиска..." oninput="filterTable()">
   
@@ -48,24 +47,23 @@
     </thead>
     <tbody></tbody>
   </table>
+
   <script>
     function loadXML() {
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", "services.xml", true);
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-        console.log(xhr.responseText); // Проверка содержимого
-        const xml = xhr.responseXML;
-        console.log(xml); // Проверка структуры XML
-      } else {
-        console.error("Ошибка загрузки файла XML:", xhr.statusText);
-      }
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", "./services.xml", true); // Путь должен быть относительным и начинаться с "./"
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            const xml = xhr.responseXML;
+            displayServices(xml);
+          } else {
+            console.error("Ошибка загрузки файла XML:", xhr.statusText);
+          }
+        }
+      };
+      xhr.send();
     }
-  };
-  xhr.send();
-}
-window.onload = loadXML;
 
     // Отображение данных из XML
     function displayServices(xml) {
@@ -81,18 +79,17 @@ window.onload = loadXML;
 
         // Создаем строку таблицы
         const row = document.createElement("tr");
-        row.innerHTML =` 
+        row.innerHTML = `
           <td>${service.getElementsByTagName("type")[0].textContent}</td>
           <td>${service.getElementsByTagName("description")[0].textContent}</td>
           <td>${service.getElementsByTagName("cost")[0].textContent} руб.</td>
           <td>${service.getElementsByTagName("duration")[0].textContent} мин.</td>
           <td>${service.getElementsByTagName("specialists")[0].textContent}</td>
-       ` ;
+        `;
         serviceTableBody.appendChild(row);
       });
     }
 
- 
     function filterTable() {
       const filterValue = document.getElementById("filter-input").value.toLowerCase();
       const rows = document.querySelectorAll("#service-table tbody tr");
@@ -105,7 +102,6 @@ window.onload = loadXML;
         row.style.display = matches ? "" : "none";
       });
     }
-
 
     function filterByPrice() {
       const minPrice = parseFloat(document.getElementById("min-price").value) || 0;
@@ -124,7 +120,7 @@ window.onload = loadXML;
       });
     }
 
-  
+    // Загрузка XML при открытии страницы
     window.onload = loadXML;
   </script>
 </body>
